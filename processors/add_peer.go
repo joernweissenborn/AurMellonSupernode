@@ -10,17 +10,18 @@ import (
 
 func AddPeer(t transcator.Transcator, n *aurarath.Node) stream2go.Suscriber {
 	return func(d interface {}){
-		m,_ := aurarath.ToMessage(d)
-		p := n.GetPeer(m.Sender)
-		t.Transaction(addpeer(p,true,n.Self.IdString()))
+		m,_ := aurarath.ToIncomingProtocolMessage(d)
+		p := m.Sender
+
+		t.Transaction(addpeer(p,false,n.Self.Id.String()))
 	}
 }
 func AddSupernode(t transcator.Transcator, n *aurarath.Node) stream2go.Suscriber {
 	return func(d interface {}){
-		m,_ := aurarath.ToMessage(d)
-		p := n.GetPeer(m.Sender)
-		t.Transaction(addpeer(p,true,n.Self.IdString()))
-		sendToPeer(n,p,aurmellon.HelloIamSuperNodeMessage{})
+		m,_ := aurarath.ToIncomingProtocolMessage(d)
+		p := m.Sender
+		t.Transaction(addpeer(p,true,n.Self.Id.String()))
+		p.Send(aurmellon.HelloIamSuperNodeMessage{})
 	}
 }
 
@@ -29,7 +30,7 @@ func addpeer(p *aurarath.Peer,supernode bool, root string) transcator.Transactio
 		if t==nil {
 			panic("transaction nil")
 		}
-		peer := storage.GetPeer(p.IdString(),t)
+		peer := storage.GetPeer(p.Id.String(),t)
 		if !peer.Exists() {
 			peer.Create(p,supernode,root)
 		}

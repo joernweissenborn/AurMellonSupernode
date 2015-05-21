@@ -52,8 +52,8 @@ func (p Peer) Create(peer *aurarath.Peer, supernode bool, root string){
 	}
 	peernr++
 	log.Println("peerNr",peernr)
-	//log.Println("STORAGECORE","Registering Peer ",peer.IdString())
-	pv := p.g.CreateVertex(peer.IdString(), peerproperties{peer,supernode})
+	log.Println("STORAGECORE","Registering Peer ",peer.Id)
+	pv := p.g.CreateVertex(peer.Id.String(), peerproperties{peer,supernode})
 	p.g.CreateEdge(GenerateUuid(), edge,pv, p.g.GetVertex(root),nil)
 
 

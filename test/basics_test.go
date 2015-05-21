@@ -32,10 +32,12 @@ func TetSupernodeGreeting(t *testing.T) {
 func Test1000Apps(t *testing.T) {
 	boot.Boot()
 	wg := new(sync.WaitGroup)
-	for i:=0;i<100;i++{
+	for i:=0;i<200;i++{
 		wg.Add(1)
+		time.Sleep(100* time.Millisecond)
 		go testapp(wg,t, i)
 	}
+	time.Sleep(100* time.Millisecond)
 	wg.Wait()
 
 
@@ -50,8 +52,8 @@ func testapp(wg *sync.WaitGroup, t *testing.T, i int){
 		client.SupernodeConnected.Then(testcompleter(c))
 		clientnode.Run()
 		select {
-		case <-time.After(30*time.Second):
-			t.Error("supernode not Found",i)
+		case <-time.After(50*time.Second):
+			t.Error("supernode not Found",i,clientnode.Self.Id)
 		case <-c:
 
 		}

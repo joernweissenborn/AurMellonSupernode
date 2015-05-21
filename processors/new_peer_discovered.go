@@ -10,11 +10,16 @@ import (
 var discpeers = 0
 func NewPeerDiscovered(n *aurarath.Node) stream2go.Suscriber{
 	return func(d interface {}) {
-		p := d.(*aurarath.Peer)
-		time.Sleep(1 * time.Millisecond)
+		pid := d.(aurarath.PeerId)
+		p := n.GetPeer(pid.String())
+		time.Sleep(100 * time.Millisecond)
 		discpeers++
-		log.Println("DIS PEERS",discpeers)
-		sendToPeer(n,p,aurmellon.HelloIamSuperNodeMessage{})
+		log.Println("DIS PEERS",discpeers,p.Id,p.Addresses())
+		if len(p.Addresses())== 0 {
+			panic(p.Id)
+		}
+		p.OpenConnection()
+		p.Send(aurmellon.HelloIamSuperNodeMessage{})
 	}
 }
 

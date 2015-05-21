@@ -16,6 +16,6 @@ func BootProcessors(n *aurarath.Node, in stream2go.Stream, t transcator.Transcat
 
 func createRoot(n *aurarath.Node) transcator.TransactionFunc {
 	return func(t *transcator.Transaction) {
-		t.CreateVertex(n.Self.IdString(), n.Self)
+		t.CreateVertex(n.Self.Id.String(), n.Self)
 	}
 }
